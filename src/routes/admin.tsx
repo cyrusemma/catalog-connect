@@ -6,7 +6,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin")({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
+    if (location.pathname === "/admin/login") return;
     const { data } = await supabase.auth.getSession();
     if (!data.session) throw redirect({ to: "/admin/login" });
     const { data: role } = await supabase
