@@ -1,0 +1,13 @@
+{
+  "name": "Catalog",
+  "short_name": "Catalog",
+  "description": "Curated products, ordered via WhatsApp.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFBEB",
+  "theme_color": "#F59E0B",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
