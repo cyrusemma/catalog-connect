@@ -75,7 +75,7 @@ function ShopPage() {
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  navigate({ search: (prev) => ({ ...prev, q: e.target.value || undefined }) });
+                  navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, q: e.target.value || undefined }) });
                 }}
                 placeholder="Search…"
                 className="w-full pl-8 sm:w-56"
@@ -83,7 +83,7 @@ function ShopPage() {
             </div>
             <Select
               value={sp.category ?? "all"}
-              onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, category: v === "all" ? undefined : v }) })}
+              onValueChange={(v) => navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, category: v === "all" ? undefined : v }) })}
             >
               <SelectTrigger className="w-40"><SelectValue placeholder="Category" /></SelectTrigger>
               <SelectContent>
@@ -95,7 +95,7 @@ function ShopPage() {
             </Select>
             <Select
               value={sp.sort ?? "latest"}
-              onValueChange={(v) => navigate({ search: (prev) => ({ ...prev, sort: v === "latest" ? undefined : (v as "price_asc" | "price_desc") }) })}
+              onValueChange={(v) => navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, sort: v === "latest" ? undefined : (v as "price_asc" | "price_desc") }) })}
             >
               <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
               <SelectContent>
