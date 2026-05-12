@@ -53,7 +53,11 @@ function HomePage() {
         .select("category")
         .eq("is_published", true)
         .not("category", "is", null);
-      const set = new Set((data ?? []).map((d: { category: string | null }) => d.category).filter(Boolean) as string[]);
+      const set = new Set(
+        (data ?? [])
+          .map((d: { category: string | null }) => d.category)
+          .filter(Boolean) as string[],
+      );
       return Array.from(set).slice(0, 8);
     },
   });
@@ -67,8 +71,14 @@ function HomePage() {
           {/* Floating amber blobs */}
           <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="animate-float absolute -top-20 -right-16 size-72 rounded-full bg-primary/20 blur-3xl" />
-            <div className="animate-float absolute bottom-[-4rem] left-[-3rem] size-80 rounded-full bg-primary-glow/25 blur-3xl" style={{ animationDelay: "1.5s" }} />
-            <div className="animate-float absolute top-1/3 left-1/2 size-40 rounded-full bg-accent/20 blur-2xl" style={{ animationDelay: "2.5s" }} />
+            <div
+              className="animate-float absolute bottom-[-4rem] left-[-3rem] size-80 rounded-full bg-primary-glow/25 blur-3xl"
+              style={{ animationDelay: "1.5s" }}
+            />
+            <div
+              className="animate-float absolute top-1/3 left-1/2 size-40 rounded-full bg-accent/20 blur-2xl"
+              style={{ animationDelay: "2.5s" }}
+            />
           </div>
 
           <div className="relative grid min-h-[85vh] gap-6 px-6 py-14 sm:px-10 md:grid-cols-2 md:py-20">
@@ -104,7 +114,11 @@ function HomePage() {
                 transition={{ delay: 0.15 }}
                 className="mt-7 flex flex-wrap gap-3"
               >
-                <Button asChild size="lg" className="rounded-2xl neu-button bg-primary text-primary-foreground hover:bg-primary">
+                <Button
+                  asChild
+                  size="lg"
+                  className="rounded-2xl neu-button bg-primary text-primary-foreground hover:bg-primary"
+                >
                   <Link to="/shop">
                     Shop now <ArrowRight className="ml-1 size-4" />
                   </Link>
@@ -125,7 +139,9 @@ function HomePage() {
           >
             <div className="mb-5 flex items-end justify-between">
               <h2 className="font-playfair text-3xl font-bold tracking-tight">Featured</h2>
-              <Link to="/shop" className="text-sm text-muted-foreground hover:text-primary">View all →</Link>
+              <Link to="/shop" className="text-sm text-muted-foreground hover:text-primary">
+                View all →
+              </Link>
             </div>
             <motion.div
               initial="hidden"
@@ -135,7 +151,10 @@ function HomePage() {
               className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
             >
               {featured.data!.map((p) => (
-                <motion.div key={p.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <motion.div
+                  key={p.id}
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                >
                   <ProductCard product={p} currency={settings.currency} />
                 </motion.div>
               ))}
@@ -146,7 +165,9 @@ function HomePage() {
         {/* Categories */}
         {(categories.data?.length ?? 0) > 0 && (
           <section className="mx-auto mt-16 max-w-7xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Browse</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Browse
+            </p>
             <h2 className="font-playfair mb-5 text-3xl font-bold tracking-tight">Categories</h2>
             <div className="flex flex-wrap gap-2">
               {categories.data!.map((c) => (
@@ -181,7 +202,10 @@ function HomePage() {
               className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
             >
               {latest.data.map((p) => (
-                <motion.div key={p.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <motion.div
+                  key={p.id}
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                >
                   <ProductCard product={p} currency={settings.currency} />
                 </motion.div>
               ))}

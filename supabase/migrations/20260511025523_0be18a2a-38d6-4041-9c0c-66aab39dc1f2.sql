@@ -29,6 +29,9 @@ $$;
 CREATE POLICY "admins read roles" ON public.user_roles FOR SELECT TO authenticated
   USING (public.has_role(auth.uid(),'admin') OR user_id = auth.uid());
 
+CREATE POLICY "users insert own role" ON public.user_roles FOR INSERT TO authenticated
+  WITH CHECK (user_id = auth.uid());
+
 -- Profiles
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,

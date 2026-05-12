@@ -1,24 +1,36 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import { useState } from "react";
-import { ExternalLink, LayoutDashboard, LogOut, Menu, Package, PlusSquare, Settings, ShoppingCart, Store, X } from "lucide-react";
+import {
+  ExternalLink,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  PlusSquare,
+  Settings,
+  ShoppingCart,
+  X,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAuth } from "@/hooks/use-auth";
+import { useLocalAuth } from "@/hooks/use-local-auth";
+import { useStoreSettings } from "@/hooks/use-store-settings";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
     if (location.pathname === "/admin/login") return;
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) throw redirect({ to: "/admin/login" });
-    const { data: role } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", data.session.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!role) throw redirect({ to: "/admin/login" });
+    // Check if user is authenticated (stored in localStorage)
+    const storedAuth = localStorage.getItem("adminAuth");
+    if (!storedAuth) throw redirect({ to: "/admin/login" });
   },
   component: AdminLayout,
 });
@@ -33,17 +45,17 @@ const links = [
 
 function AdminLayout() {
   const nav = useNavigate();
-  const { signOut, user } = useAuth();
+  const { signOut, user } = useLocalAuth();
+  const { settings } = useStoreSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const isActive = (to: string, exact?: boolean) => (exact ? pathname === to : pathname.startsWith(to));
+  const isActive = (to: string, exact?: boolean) =>
+    exact ? pathname === to : pathname.startsWith(to);
 
   const SidebarBody = (
     <div className="flex h-full flex-col gap-2 p-4">
       <Link to="/admin" className="mb-4 flex items-center gap-2.5 px-2">
-        <span className="grid size-9 place-items-center rounded-xl gradient-warm neu-button">
-          <Store className="size-4 text-primary-foreground" />
-        </span>
+        <Logo logoUrl={settings.logo_url} storeName={settings.store_name} className="size-9" />
         <span className="font-playfair text-lg font-bold">Catalog</span>
       </Link>
       <nav className="flex-1 space-y-1.5 text-sm">
@@ -66,16 +78,24 @@ function AdminLayout() {
         })}
       </nav>
       <div className="space-y-1.5 border-t border-border/60 pt-3 text-sm">
-        <Link to="/" className="flex items-center gap-3 rounded-xl px-3 py-2 text-muted-foreground hover:text-primary">
+        <Link
+          to="/"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-muted-foreground hover:text-primary"
+        >
           <ExternalLink className="size-4" /> View store
         </Link>
         <button
-          onClick={async () => { await signOut(); nav({ to: "/admin/login" }); }}
+          onClick={async () => {
+            await signOut();
+            nav({ to: "/admin/login" });
+          }}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-muted-foreground hover:text-destructive"
         >
           <LogOut className="size-4" /> Sign out
         </button>
-        {user?.email && <p className="px-3 pt-1 text-[11px] text-muted-foreground/70 truncate">{user.email}</p>}
+        {user?.email && (
+          <p className="px-3 pt-1 text-[11px] text-muted-foreground/70 truncate">{user.email}</p>
+        )}
       </div>
     </div>
   );
@@ -89,10 +109,16 @@ function AdminLayout() {
 
       {/* Mobile header */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border/60 bg-background/80 px-4 py-3 backdrop-blur md:hidden">
-        <button onClick={() => setMobileOpen(true)} aria-label="Open menu" className="grid size-9 place-items-center rounded-xl neu-button">
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="grid size-9 place-items-center rounded-xl neu-button"
+        >
           <Menu className="size-4" />
         </button>
-        <Link to="/admin" className="font-playfair text-lg font-bold">Catalog Admin</Link>
+        <Link to="/admin" className="font-playfair text-lg font-bold">
+          Catalog Admin
+        </Link>
         <ThemeToggle />
       </header>
 
@@ -101,12 +127,16 @@ function AdminLayout() {
         {mobileOpen && (
           <>
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
               className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
             />
             <motion.aside
-              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
               className="fixed inset-y-0 left-0 z-50 w-72 bg-sidebar shadow-2xl md:hidden"
             >
@@ -128,7 +158,14 @@ function AdminLayout() {
         <div className="hidden md:flex sticky top-0 z-20 items-center justify-end gap-2 border-b border-border/60 bg-background/70 px-6 py-3 backdrop-blur">
           <span className="text-xs text-muted-foreground">{user?.email}</span>
           <ThemeToggle />
-          <Button variant="ghost" size="sm" onClick={async () => { await signOut(); nav({ to: "/admin/login" }); }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              await signOut();
+              nav({ to: "/admin/login" });
+            }}
+          >
             <LogOut className="size-4" />
           </Button>
         </div>

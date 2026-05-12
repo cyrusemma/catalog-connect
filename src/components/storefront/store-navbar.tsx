@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, ShoppingBag, Store, X, Settings } from "lucide-react";
+import { Menu, ShoppingBag, X, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Logo } from "@/components/logo";
 import { useCart } from "@/lib/cart-store";
 import { useStoreSettings } from "@/hooks/use-store-settings";
 import { useAuth } from "@/hooks/use-auth";
@@ -30,15 +31,28 @@ export function StoreNavbar() {
       >
         <div className="flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="grid size-9 place-items-center rounded-xl gradient-warm neu-button">
-              <Store className="size-4 text-primary-foreground" />
+            <Logo logoUrl={settings.logo_url} storeName={settings.store_name} className="size-9" />
+            <span className="font-playfair text-lg font-bold tracking-tight sm:text-xl">
+              {settings.store_name}
             </span>
-            <span className="font-playfair text-lg font-bold tracking-tight sm:text-xl">{settings.store_name}</span>
           </Link>
 
           <nav className="hidden items-center gap-1 text-sm font-medium sm:flex">
-            <Link to="/" className="rounded-full px-3 py-1.5 hover:text-primary" activeOptions={{ exact: true }} activeProps={{ className: "text-primary" }}>Home</Link>
-            <Link to="/shop" className="rounded-full px-3 py-1.5 hover:text-primary" activeProps={{ className: "text-primary" }}>Shop</Link>
+            <Link
+              to="/"
+              className="rounded-full px-3 py-1.5 hover:text-primary"
+              activeOptions={{ exact: true }}
+              activeProps={{ className: "text-primary" }}
+            >
+              Home
+            </Link>
+            <Link
+              to="/shop"
+              className="rounded-full px-3 py-1.5 hover:text-primary"
+              activeProps={{ className: "text-primary" }}
+            >
+              Shop
+            </Link>
           </nav>
 
           <div className="flex items-center gap-1">
@@ -94,10 +108,28 @@ export function StoreNavbar() {
             className="glass neu-raised mx-3 mt-2 rounded-2xl p-3 sm:hidden"
           >
             <nav className="flex flex-col text-sm font-medium">
-              <Link to="/" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-accent/40">Home</Link>
-              <Link to="/shop" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-accent/40">Shop</Link>
+              <Link
+                to="/"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-3 py-2 hover:bg-accent/40"
+              >
+                Home
+              </Link>
+              <Link
+                to="/shop"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-3 py-2 hover:bg-accent/40"
+              >
+                Shop
+              </Link>
               {isAdmin && (
-                <Link to="/admin" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2 hover:bg-accent/40">Admin</Link>
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-3 py-2 hover:bg-accent/40"
+                >
+                  Admin
+                </Link>
               )}
             </nav>
           </motion.div>

@@ -14,13 +14,23 @@ export function StoreFooter() {
           <span className="font-playfair text-base font-bold">{settings.store_name}</span>
         </div>
         <nav className="flex items-center gap-5 text-muted-foreground">
-          <Link to="/" className="hover:text-primary">Home</Link>
-          <Link to="/shop" className="hover:text-primary">Shop</Link>
-          <Link to="/cart" className="hover:text-primary">Cart</Link>
+          <Link to="/" className="hover:text-primary">
+            Home
+          </Link>
+          <Link to="/shop" className="hover:text-primary">
+            Shop
+          </Link>
+          <Link to="/cart" className="hover:text-primary">
+            Cart
+          </Link>
         </nav>
         <div className="flex items-center gap-3 text-muted-foreground">
-          <p>© {new Date().getFullYear()} {settings.store_name}</p>
-          <Link to="/admin/login" className="opacity-50 hover:opacity-100 hover:text-primary">Admin</Link>
+          <p>
+            © {new Date().getFullYear()} {settings.store_name}
+          </p>
+          <Link to="/admin/login" className="opacity-50 hover:opacity-100 hover:text-primary">
+            Admin
+          </Link>
         </div>
       </div>
     </footer>

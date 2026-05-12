@@ -1,15 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { StoreNavbar } from "@/components/storefront/store-navbar";
 import { StoreFooter } from "@/components/storefront/store-footer";
 import { ProductCard } from "@/components/storefront/product-card";
 import { useStoreSettings } from "@/hooks/use-store-settings";
+import { useProducts } from "@/hooks/use-products";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Product } from "@/lib/types";
 
 const search = z.object({
@@ -27,40 +32,51 @@ function ShopPage() {
   const navigate = Route.useNavigate();
   const sp = Route.useSearch();
   const { settings } = useStoreSettings();
+  const { products, loading } = useProducts();
   const [query, setQuery] = useState(sp.q ?? "");
 
-  const products = useQuery({
-    queryKey: ["products", "all", sp.category ?? null, sp.sort ?? "latest"],
-    queryFn: async () => {
-      let q = supabase.from("products").select("*").eq("is_published", true);
-      if (sp.category) q = q.eq("category", sp.category);
-      if (sp.sort === "price_asc") q = q.order("selling_price", { ascending: true });
-      else if (sp.sort === "price_desc") q = q.order("selling_price", { ascending: false });
-      else q = q.order("created_at", { ascending: false });
-      const { data } = await q.limit(200);
-      return (data ?? []) as Product[];
-    },
-  });
+  // Filter published products
+  const filteredAndSorted = useMemo(() => {
+    let result = products.filter((p) => p.is_published);
 
-  const categories = useQuery({
-    queryKey: ["categories", "shop"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("products")
-        .select("category")
-        .eq("is_published", true)
-        .not("category", "is", null);
-      return Array.from(new Set((data ?? []).map((d: { category: string | null }) => d.category).filter(Boolean) as string[]));
-    },
-  });
+    // Filter by category
+    if (sp.category) {
+      result = result.filter((p) => p.category === sp.category);
+    }
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return products.data ?? [];
-    return (products.data ?? []).filter((p) =>
-      [p.title, p.brand, p.description, p.category].filter(Boolean).join(" ").toLowerCase().includes(q),
+    // Search filter
+    if (query) {
+      const q = query.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.brand?.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    if (sp.sort === "price_asc") {
+      result.sort((a, b) => a.selling_price - b.selling_price);
+    } else if (sp.sort === "price_desc") {
+      result.sort((a, b) => b.selling_price - a.selling_price);
+    } else {
+      result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+
+    return result;
+  }, [products, sp.category, sp.sort, query]);
+
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        products
+          .filter((p) => p.is_published)
+          .map((p) => p.category)
+          .filter(Boolean) as string[],
+      ),
     );
-  }, [products.data, query]);
+  }, [products]);
 
   return (
     <div className="min-h-screen">
@@ -75,7 +91,12 @@ function ShopPage() {
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, q: e.target.value || undefined }) });
+                  navigate({
+                    search: (prev: z.infer<typeof search>) => ({
+                      ...prev,
+                      q: e.target.value || undefined,
+                    }),
+                  });
                 }}
                 placeholder="Search…"
                 className="w-full pl-8 sm:w-56"
@@ -83,21 +104,41 @@ function ShopPage() {
             </div>
             <Select
               value={sp.category ?? "all"}
-              onValueChange={(v) => navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, category: v === "all" ? undefined : v }) })}
+              onValueChange={(v) =>
+                navigate({
+                  search: (prev: z.infer<typeof search>) => ({
+                    ...prev,
+                    category: v === "all" ? undefined : v,
+                  }),
+                })
+              }
             >
-              <SelectTrigger className="w-40"><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All categories</SelectItem>
-                {(categories.data ?? []).map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select
               value={sp.sort ?? "latest"}
-              onValueChange={(v) => navigate({ search: (prev: z.infer<typeof search>) => ({ ...prev, sort: v === "latest" ? undefined : (v as "price_asc" | "price_desc") }) })}
+              onValueChange={(v) =>
+                navigate({
+                  search: (prev: z.infer<typeof search>) => ({
+                    ...prev,
+                    sort: v === "latest" ? undefined : (v as "price_asc" | "price_desc"),
+                  }),
+                })
+              }
             >
-              <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="latest">Latest</SelectItem>
                 <SelectItem value="price_asc">Price: Low to High</SelectItem>
@@ -108,20 +149,22 @@ function ShopPage() {
         </div>
 
         <div className="mt-6">
-          {products.isLoading ? (
+          {loading ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="aspect-square animate-pulse rounded-2xl bg-muted" />
               ))}
             </div>
-          ) : filtered.length ? (
+          ) : filteredAndSorted.length ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-              {filtered.map((p) => (
+              {filteredAndSorted.map((p) => (
                 <ProductCard key={p.id} product={p} currency={settings.currency} />
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl bg-card p-10 text-center text-muted-foreground raised">No products match your filters.</div>
+            <div className="rounded-2xl bg-card p-10 text-center text-muted-foreground raised">
+              No products match your filters.
+            </div>
           )}
         </div>
       </main>

@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductForm, emptyProduct, type ProductFormValue } from "@/components/admin/product-form";
 import { importProduct } from "@/lib/import.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { useProducts } from "@/hooks/use-products";
 import { slugify } from "@/lib/slug";
+import type { Product } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/products/new")({
   component: NewProductPage,
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/admin/products/new")({
 function NewProductPage() {
   const nav = useNavigate();
   const importFn = useServerFn(importProduct);
+  const { addProduct } = useProducts();
   const [url, setUrl] = useState("");
   const [importing, setImporting] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -44,7 +46,9 @@ function NewProductPage() {
         });
         toast.success("Product imported. Review and save.");
       } else {
-        toast.message(res.error || "Couldn't import — fill manually", { description: "Form is ready below." });
+        toast.message(res.error || "Couldn't import — fill manually", {
+          description: "Form is ready below.",
+        });
         setValue({ ...emptyProduct, source_url: url });
       }
     } catch (e) {
@@ -56,24 +60,33 @@ function NewProductPage() {
   };
 
   const save = async () => {
+    if (!value.title) {
+      toast.error("Product title is required");
+      return;
+    }
+
     setBusy(true);
     try {
-      const { error } = await supabase.from("products").insert({
+      const newProduct: Product = {
+        id: "product-" + Date.now(),
         slug: value.slug || slugify(value.title),
         title: value.title,
         brand: value.brand || null,
         category: value.category || null,
         description: value.description || null,
         source_url: value.source_url || null,
-        source_price: value.source_price,
+        source_price: value.source_price || 0,
         selling_price: value.selling_price,
-        stock: value.stock,
-        images: value.images,
-        specifications: value.specifications,
-        is_published: value.is_published,
-        is_featured: value.is_featured,
-      });
-      if (error) throw error;
+        stock: value.stock || 0,
+        images: value.images || [],
+        specifications: value.specifications || null,
+        is_published: value.is_published ?? false,
+        is_featured: value.is_featured ?? false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      addProduct(newProduct);
       toast.success("Product created");
       nav({ to: "/admin/products" });
     } catch (e) {
@@ -88,7 +101,9 @@ function NewProductPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Add product</h1>
-        <p className="text-sm text-muted-foreground">Import from Jumia Ghana or fill the form manually.</p>
+        <p className="text-sm text-muted-foreground">
+          Import from Jumia Ghana or fill the form manually.
+        </p>
       </div>
 
       <div className="rounded-2xl bg-card p-4 raised">
@@ -97,15 +112,27 @@ function NewProductPage() {
           <h2 className="text-sm font-semibold">Import from URL</h2>
         </div>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <Input placeholder="https://www.jumia.com.gh/..." value={url} onChange={(e) => setUrl(e.target.value)} />
+          <Input
+            placeholder="https://www.jumia.com.gh/..."
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
           <Button onClick={runImport} disabled={importing || !url} className="rounded-full">
             {importing ? <Loader2 className="size-4 animate-spin" /> : "Import"}
           </Button>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Supported: Jumia Ghana. Other sites coming soon — fill manually for now.</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Supported: Jumia Ghana. Other sites coming soon — fill manually for now.
+        </p>
       </div>
 
-      <ProductForm value={value} onChange={setValue} onSubmit={save} submitLabel="Create product" busy={busy} />
+      <ProductForm
+        value={value}
+        onChange={setValue}
+        onSubmit={save}
+        submitLabel="Create product"
+        busy={busy}
+      />
     </div>
   );
 }

@@ -99,10 +99,10 @@
   --chart-5: hsl(300 60% 55%);
 
   /* Neumorphism shadow components (light/dark surfaces) */
-  --neu-light: 255 255 255;       /* lighter highlight */
-  --neu-dark: 30 20 10;            /* deeper shadow */
+  --neu-light: 255 255 255; /* lighter highlight */
+  --neu-dark: 30 20 10; /* deeper shadow */
   --neu-light-alpha: 0.85;
-  --neu-dark-alpha: 0.10;
+  --neu-dark-alpha: 0.1;
 
   --gradient-warm: linear-gradient(135deg, hsl(38 92% 50%), hsl(42 95% 65%));
   --gradient-hero: linear-gradient(135deg, hsl(40 60% 95%), hsl(35 55% 88%));
@@ -156,8 +156,12 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { font-family: var(--font-inter); }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    font-family: var(--font-inter);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -166,7 +170,10 @@
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "ss01", "cv11";
   }
-  .font-playfair, .font-serif { font-family: var(--font-playfair); }
+  .font-playfair,
+  .font-serif {
+    font-family: var(--font-playfair);
+  }
 }
 
 @layer utilities {
@@ -194,7 +201,9 @@
     box-shadow:
       4px 4px 10px rgb(var(--neu-dark) / var(--neu-dark-alpha)),
       -3px -3px 8px rgb(var(--neu-light) / var(--neu-light-alpha));
-    transition: box-shadow 0.18s ease, transform 0.18s ease;
+    transition:
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
   }
   .neu-button:hover {
     box-shadow:
@@ -213,45 +222,81 @@
   }
 
   /* Backwards compat used by existing markup */
-  .raised { box-shadow:
+  .raised {
+    box-shadow:
       6px 6px 14px rgb(var(--neu-dark) / var(--neu-dark-alpha)),
-      -4px -4px 10px rgb(var(--neu-light) / var(--neu-light-alpha)); }
-  .soft-shadow { box-shadow: var(--shadow-soft); }
-  .glow-shadow { box-shadow: var(--shadow-glow); }
-  .gradient-warm { background: var(--gradient-warm); }
-  .gradient-hero { background: var(--gradient-hero); }
+      -4px -4px 10px rgb(var(--neu-light) / var(--neu-light-alpha));
+  }
+  .soft-shadow {
+    box-shadow: var(--shadow-soft);
+  }
+  .glow-shadow {
+    box-shadow: var(--shadow-glow);
+  }
+  .gradient-warm {
+    background: var(--gradient-warm);
+  }
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
 
   .input-base {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    transition:
+      box-shadow 0.15s ease,
+      border-color 0.15s ease;
   }
-  .input-base:focus { outline: none; box-shadow: 0 0 0 3px hsl(38 92% 50% / 0.25); border-color: var(--primary); }
+  .input-base:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px hsl(38 92% 50% / 0.25);
+    border-color: var(--primary);
+  }
 
   /* Animations */
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
   }
-  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
 
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
   .animate-shimmer {
-    background: linear-gradient(90deg,
+    background: linear-gradient(
+      90deg,
       color-mix(in oklab, var(--muted) 100%, transparent),
       color-mix(in oklab, var(--muted) 60%, transparent),
-      color-mix(in oklab, var(--muted) 100%, transparent));
+      color-mix(in oklab, var(--muted) 100%, transparent)
+    );
     background-size: 200% 100%;
     animation: shimmer 1.6s linear infinite;
   }
 
   @keyframes pulse-amber {
-    0%, 100% { box-shadow: 0 0 0 0 hsl(38 92% 50% / 0.5); }
-    50% { box-shadow: 0 0 0 14px hsl(38 92% 50% / 0); }
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 hsl(38 92% 50% / 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 14px hsl(38 92% 50% / 0);
+    }
   }
-  .animate-pulse-amber { animation: pulse-amber 2s ease-out infinite; }
+  .animate-pulse-amber {
+    animation: pulse-amber 2s ease-out infinite;
+  }
 }

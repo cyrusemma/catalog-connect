@@ -7,7 +7,10 @@ export function ProductCard({ product, currency }: { product: Product; currency:
   const img = product.images?.[0];
   const off = discountPercent(product.source_price ?? undefined, product.selling_price);
   return (
-    <motion.div whileHover={{ y: -4, scale: 1.01 }} transition={{ type: "spring", stiffness: 320, damping: 22 }}>
+    <motion.div
+      whileHover={{ y: -4, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 320, damping: 22 }}
+    >
       <Link
         to="/product/$slug"
         params={{ slug: product.slug }}
@@ -22,7 +25,9 @@ export function ProductCard({ product, currency }: { product: Product; currency:
               className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="grid h-full w-full place-items-center text-xs text-muted-foreground">No image</div>
+            <div className="grid h-full w-full place-items-center text-xs text-muted-foreground">
+              No image
+            </div>
           )}
           {off > 0 && (
             <span className="absolute left-2 top-2 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground neu-button">
@@ -37,11 +42,15 @@ export function ProductCard({ product, currency }: { product: Product; currency:
         </div>
         <div className="p-4">
           {product.brand && (
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{product.brand}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {product.brand}
+            </p>
           )}
           <h3 className="mt-0.5 line-clamp-2 text-sm font-medium leading-snug">{product.title}</h3>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-base font-bold text-primary">{formatMoney(product.selling_price, currency)}</span>
+            <span className="text-base font-bold text-primary">
+              {formatMoney(product.selling_price, currency)}
+            </span>
             {off > 0 && product.source_price && (
               <span className="text-xs text-muted-foreground line-through">
                 {formatMoney(product.source_price, currency)}

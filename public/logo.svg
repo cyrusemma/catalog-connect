@@ -1,0 +1,23 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Orange shopping bag -->
+  <g transform="translate(50, 40)">
+    <!-- Bag body -->
+    <path d="M 20 80 L 30 20 L 70 20 L 80 80 Z" fill="#FF8C42" stroke="#FF8C42" stroke-width="2" stroke-linejoin="round"/>
+    
+    <!-- Bag width/depth -->
+    <path d="M 80 80 L 85 90 L 25 90 L 20 80" fill="#FF8C42" opacity="0.8"/>
+    <path d="M 85 90 L 90 25 L 70 20" fill="#FF8C42" opacity="0.6"/>
+    
+    <!-- Left handle -->
+    <path d="M 35 20 Q 25 5 35 0" stroke="#FF8C42" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Right handle -->
+    <path d="M 65 20 Q 75 5 65 0" stroke="#FF8C42" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Handle connector -->
+    <rect x="30" y="15" width="40" height="3" fill="#FF8C42" rx="1.5"/>
+    
+    <!-- Window/accent on bag -->
+    <rect x="30" y="35" width="40" height="30" fill="none" stroke="white" stroke-width="2" rx="2" opacity="0.9"/>
+  </g>
+</svg>
