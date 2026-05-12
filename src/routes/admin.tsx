@@ -23,14 +23,13 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
-type AdminLink = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
-const links: AdminLink[] = [
+const links = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/products/new", label: "Add product", icon: PlusSquare },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
-];
+  { to: "/admin/products", label: "Products", icon: Package, exact: false },
+  { to: "/admin/products/new", label: "Add product", icon: PlusSquare, exact: false },
+  { to: "/admin/orders", label: "Orders", icon: ShoppingCart, exact: false },
+  { to: "/admin/settings", label: "Settings", icon: Settings, exact: false },
+] as const;
 
 function AdminLayout() {
   const nav = useNavigate();
