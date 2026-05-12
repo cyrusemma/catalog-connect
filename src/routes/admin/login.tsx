@@ -76,14 +76,18 @@ function AdminLoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center bg-background px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-card p-6 raised">
-        <div className="mb-4 flex items-center gap-2">
-          <span className="grid size-9 place-items-center rounded-xl gradient-warm">
-            <Store className="size-4 text-primary-foreground" />
+    <div className="relative grid min-h-screen place-items-center overflow-hidden bg-background px-4">
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="animate-float absolute -top-24 left-1/4 size-72 rounded-full bg-primary/20 blur-3xl" />
+        <div className="animate-float absolute bottom-[-3rem] right-1/4 size-80 rounded-full bg-primary-glow/20 blur-3xl" style={{ animationDelay: "1.5s" }} />
+      </div>
+      <div className="relative w-full max-w-sm rounded-3xl glass-card neu-raised p-7">
+        <div className="mb-5 flex items-center gap-3">
+          <span className="grid size-11 place-items-center rounded-2xl gradient-warm neu-button">
+            <Store className="size-5 text-primary-foreground" />
           </span>
           <div>
-            <h1 className="text-lg font-semibold">{mode === "setup" ? "Create admin account" : "Admin login"}</h1>
+            <h1 className="font-playfair text-xl font-bold">{mode === "setup" ? "Create admin" : "Admin login"}</h1>
             <p className="text-xs text-muted-foreground">
               {mode === "setup" ? "First-run setup. Locks after this." : "Restricted area."}
             </p>
@@ -94,19 +98,19 @@ function AdminLoginPage() {
         ) : (
           <form onSubmit={submit} className="space-y-3">
             <div>
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email</Label>
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 rounded-xl" />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Password</Label>
+              <Input id="password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1.5 rounded-xl" />
             </div>
-            <Button type="submit" disabled={busy} className="w-full rounded-full raised">
+            <Button type="submit" disabled={busy} className="w-full rounded-xl neu-button bg-primary text-primary-foreground hover:bg-primary">
               {busy ? "Working…" : mode === "setup" ? "Create admin" : "Sign in"}
             </Button>
           </form>
         )}
-        <Link to="/" className="mt-4 block text-center text-xs text-muted-foreground hover:text-primary">
+        <Link to="/" className="mt-5 block text-center text-xs text-muted-foreground hover:text-primary">
           ← Back to storefront
         </Link>
       </div>
