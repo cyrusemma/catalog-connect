@@ -1,0 +1,28 @@
+{
+  "name": "@catalog/api-client",
+  "version": "0.0.1",
+  "description": "Supabase client & API wrapper",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.31.0",
+    "@tanstack/react-query": "^4.32.0",
+    "@catalog/types": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "typescript": "^5.0.0"
+  }
+}

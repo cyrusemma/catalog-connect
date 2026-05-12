@@ -1,0 +1,19 @@
+{
+  "name": "@catalog/types",
+  "version": "0.0.1",
+  "description": "TypeScript type definitions",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

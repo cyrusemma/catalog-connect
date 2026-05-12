@@ -1,0 +1,22 @@
+{
+  "name": "@catalog/utils",
+  "version": "0.0.1",
+  "description": "Utility functions",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "@catalog/types": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

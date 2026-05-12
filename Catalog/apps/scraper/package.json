@@ -1,0 +1,26 @@
+{
+  "name": "@catalog/scraper",
+  "version": "0.0.1",
+  "description": "Product scraper service",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "scrape": "node src/scraper.js",
+    "lint": "eslint src",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "puppeteer": "^21.0.0",
+    "@supabase/supabase-js": "^2.31.0",
+    "dotenv": "^16.0.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/express": "^4.17.0",
+    "typescript": "^5.0.0"
+  }
+}
