@@ -20,16 +20,17 @@ export function InstallPrompt() {
 
   if (hidden || !evt) return null;
   return (
-    <div className="glass fixed bottom-4 left-4 right-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3 raised">
-      <span className="grid size-10 place-items-center rounded-xl gradient-warm">
+    <div className="glass-card neu-raised fixed bottom-4 left-4 right-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
+      <span className="grid size-10 place-items-center rounded-xl gradient-warm neu-button">
         <Download className="size-4 text-primary-foreground" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium">Install Catalog</p>
+        <p className="text-sm font-semibold">Install Catalog</p>
         <p className="text-xs text-muted-foreground">Add to your home screen for instant access.</p>
       </div>
       <Button
         size="sm"
+        className="rounded-full neu-button bg-primary text-primary-foreground hover:bg-primary"
         onClick={async () => {
           await evt.prompt();
           await evt.userChoice;
