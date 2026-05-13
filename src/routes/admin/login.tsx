@@ -13,6 +13,8 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLoginPage() {
   const nav = useNavigate();
+  const ADMIN_EMAIL = "Catalog@Shop.com";
+  const ADMIN_PASSWORD = "Cyrus0102";
   const [mode, setMode] = useState<"loading" | "setup" | "login">("loading");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,9 +25,14 @@ function AdminLoginPage() {
       if (error) {
         console.error(error);
         setMode("login");
+        setEmail(ADMIN_EMAIL);
+        setPassword(ADMIN_PASSWORD);
         return;
       }
-      setMode(data ? "login" : "setup");
+      const next = data ? "login" : "setup";
+      setMode(next);
+      setEmail(ADMIN_EMAIL);
+      setPassword(ADMIN_PASSWORD);
     });
   }, []);
 
