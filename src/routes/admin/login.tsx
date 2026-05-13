@@ -13,8 +13,6 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLoginPage() {
   const nav = useNavigate();
-  const ADMIN_EMAIL = "Catalog@Shop.com";
-  const ADMIN_PASSWORD = "Cyrus0102";
   const [mode, setMode] = useState<"loading" | "setup" | "login">("loading");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,14 +23,9 @@ function AdminLoginPage() {
       if (error) {
         console.error(error);
         setMode("login");
-        setEmail(ADMIN_EMAIL);
-        setPassword(ADMIN_PASSWORD);
         return;
       }
-      const next = data ? "login" : "setup";
-      setMode(next);
-      setEmail(ADMIN_EMAIL);
-      setPassword(ADMIN_PASSWORD);
+      setMode(data ? "login" : "setup");
     });
   }, []);
 
@@ -41,25 +34,24 @@ function AdminLoginPage() {
     setBusy(true);
     try {
       if (mode === "setup") {
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
         if (error) throw error;
-        const userId = data.user?.id;
-        if (!userId) throw new Error("Signup failed");
-        // Sign in to get session, then insert role
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
-        const { error: roleErr } = await supabase.from("user_roles").insert({ user_id: userId, role: "admin" });
-        if (roleErr) throw roleErr;
+        const { error: bootstrapErr } = await supabase.rpc("bootstrap_admin");
+        if (bootstrapErr) throw bootstrapErr;
         toast.success("Admin account created");
         nav({ to: "/admin" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        // Verify admin
+        // Try bootstrap (no-op if an admin already exists) so the very first
+        // login can self-promote if signup happened before role was granted.
+        await supabase.rpc("bootstrap_admin");
         const { data: userData } = await supabase.auth.getUser();
         const { data: role } = await supabase
           .from("user_roles")
