@@ -100,6 +100,13 @@ function AdminLoginPage() {
             </p>
           </div>
         </div>
+        {mode !== "loading" && (
+          <div className="mb-3 rounded-xl bg-primary/10 p-3 text-xs text-foreground/80">
+            <div className="font-semibold text-primary">Default admin credentials</div>
+            <div>Email: <span className="font-mono">Catalog@Shop.com</span></div>
+            <div>Password: <span className="font-mono">Cyrus0102</span></div>
+          </div>
+        )}
         {mode === "loading" ? (
           <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
         ) : (
