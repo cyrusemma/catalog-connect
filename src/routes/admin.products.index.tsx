@@ -9,7 +9,7 @@ import { formatMoney } from "@/lib/format";
 import { buildWhatsAppShareUrl } from "@/lib/whatsapp";
 import type { Product } from "@/lib/types";
 
-export const Route = createFileRoute("/admin/products")({
+export const Route = createFileRoute("/admin/products/")({
   component: AdminProductsPage,
 });
 
