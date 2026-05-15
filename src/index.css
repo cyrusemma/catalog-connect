@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { transition: background-color 0.3s ease, color 0.3s ease; }
+  body {
+    @apply bg-cream-50 text-dark-800 font-sans antialiased;
+    min-height: 100dvh;
+  }
+  .dark body {
+    @apply bg-dark-900 text-white;
+  }
+  #root { min-height: 100dvh; display: flex; flex-direction: column; }
+}
+
+@layer components {
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/60 dark:bg-white/5 backdrop-blur-md border border-cream-200 dark:border-white/10;
+  }
+  .glass-amber {
+    @apply bg-brand-400/10 backdrop-blur-md border border-brand-400/30;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-brand-400 hover:bg-brand-500 text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-200 active:scale-95 shadow-amber-glow;
+  }
+  .btn-whatsapp {
+    @apply bg-whatsapp hover:bg-whatsapp-hover text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-200 active:scale-95 flex items-center gap-2;
+  }
+  .btn-ghost {
+    @apply border border-dark-800/20 dark:border-white/20 hover:border-brand-400/50 hover:bg-brand-400/5 text-dark-800 dark:text-white font-medium px-6 py-3 rounded-2xl transition-all duration-200;
+  }
+
+  /* Cards — claymorphism feel */
+  .card {
+    @apply bg-white dark:bg-dark-800 rounded-3xl overflow-hidden border border-cream-200 dark:border-brand-400/15 transition-all duration-300;
+  }
+  .card-hover {
+    @apply hover:shadow-cream-glow dark:hover:shadow-amber-glow hover:border-brand-400/30 dark:hover:border-brand-400/30;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full bg-cream-100 dark:bg-dark-700 border border-cream-200 dark:border-white/10 focus:border-brand-400/60 focus:ring-2 focus:ring-brand-400/20 rounded-xl px-4 py-3 text-dark-800 dark:text-white placeholder-cream-400 dark:placeholder-white/30 outline-none transition-all;
+  }
+
+  /* Badges */
+  .badge-new {
+    @apply bg-brand-400 text-white text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1;
+  }
+  .badge-discount {
+    @apply bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full;
+  }
+  .badge-featured {
+    @apply bg-white/70 dark:bg-white/10 backdrop-blur-md text-dark-800 dark:text-white text-xs font-medium px-2 py-0.5 rounded-full border border-cream-200 dark:border-white/20 flex items-center gap-1;
+  }
+
+  /* Shimmer for hero text */
+  .text-shimmer {
+    background: linear-gradient(90deg, #d4820a 0%, #e8a020 25%, #faecc6 50%, #e8a020 75%, #d4820a 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    @apply animate-shimmer;
+  }
+
+  /* Underline gradient for section titles */
+  .underline-gradient {
+    position: relative;
+  }
+  .underline-gradient::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    height: 2px;
+    width: 60px;
+    background: linear-gradient(90deg, #d4820a, #e8a020, #d4820a);
+    background-size: 200% 100%;
+    @apply animate-gradient-x rounded-full;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
+
+/* Default scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-brand-400/30 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-brand-400/50; }
+
+/* PWA safe area */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }

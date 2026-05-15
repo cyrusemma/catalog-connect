@@ -1,0 +1,195 @@
+import { useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { ArrowLeft, ShoppingCart, WhatsappLogo, Star, CheckCircle, XCircle, SmileySad } from '@phosphor-icons/react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useProduct } from '../hooks/useProducts'
+import { useCartStore } from '../store/cartStore'
+import { formatPrice, buildWhatsAppUrl, buildProductWhatsAppMessage } from '../lib/utils'
+
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '233000000000'
+
+export default function ProductDetail() {
+  const { id } = useParams<{ id: string }>()
+  const { data: product, isLoading } = useProduct(id!)
+  const addItem = useCartStore(s => s.addItem)
+  const [activeImg, setActiveImg] = useState(0)
+  const [added, setAdded] = useState(false)
+
+  const handleAddToCart = () => {
+    if (!product) return
+    addItem(product)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
+
+  const handleWhatsApp = () => {
+    if (!product) return
+    const url = buildWhatsAppUrl(
+      WHATSAPP_NUMBER,
+      buildProductWhatsAppMessage(product.title, product.selling_price, window.location.href)
+    )
+    window.open(url, '_blank')
+  }
+
+  if (isLoading) {
+    return (
+      <main className="flex-1 max-w-7xl mx-auto px-4 py-10 animate-pulse">
+        <div className="h-6 w-28 bg-cream-100 dark:bg-dark-700 rounded mb-8" />
+        <div className="grid md:grid-cols-2 gap-10">
+          <div className="aspect-square bg-cream-100 dark:bg-dark-700 rounded-3xl" />
+          <div className="space-y-4">
+            <div className="h-8 bg-cream-100 dark:bg-dark-700 rounded w-3/4" />
+            <div className="h-6 bg-cream-100 dark:bg-dark-700 rounded w-1/4" />
+            <div className="h-24 bg-cream-100 dark:bg-dark-700 rounded" />
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  if (!product) {
+    return (
+      <main className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <SmileySad size={56} weight="duotone" className="text-brand-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-dark-800 dark:text-white mb-2">Product not found</h2>
+          <Link to="/shop" className="btn-primary inline-flex mt-4">Back to Shop</Link>
+        </div>
+      </main>
+    )
+  }
+
+  const images = product.images?.length > 0 ? product.images : ['https://placehold.co/600x600/1a1008/d4820a?text=No+Image']
+
+  return (
+    <main className="flex-1 max-w-7xl mx-auto px-4 py-10 pb-28 lg:pb-10">
+      <Link to="/shop" className="inline-flex items-center gap-2 text-dark-800/60 dark:text-white/50 hover:text-brand-400 text-sm mb-8 transition-colors">
+        <ArrowLeft size={16} /> Back to Shop
+      </Link>
+
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-14">
+        {/* Images */}
+        <div>
+          <div className="aspect-square rounded-3xl overflow-hidden bg-cream-100 dark:bg-dark-800 border border-cream-200 dark:border-brand-400/15 mb-3 relative">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeImg}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                src={images[activeImg]}
+                alt={product.title}
+                className="w-full h-full object-cover"
+              />
+            </AnimatePresence>
+          </div>
+          {images.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImg(i)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                    activeImg === i ? 'border-brand-400 shadow-amber-glow' : 'border-transparent opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Details */}
+        <div className="flex flex-col">
+          <span className="text-brand-400 text-xs font-bold uppercase tracking-[0.2em] mb-2">{product.category}</span>
+          <h1 className="text-3xl sm:text-4xl font-display font-bold text-dark-800 dark:text-white mb-4 leading-snug">{product.title}</h1>
+
+          {product.rating && (
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    size={14}
+                    weight={i < Math.round(product.rating!) ? 'fill' : 'regular'}
+                    className={i < Math.round(product.rating!) ? 'text-brand-400' : 'text-cream-300 dark:text-white/20'}
+                  />
+                ))}
+              </div>
+              <span className="text-dark-800/60 dark:text-white/50 text-sm">{product.rating} ({product.rating_count} reviews)</span>
+            </div>
+          )}
+
+          {/* Price card */}
+          <div className="glass-amber rounded-2xl p-5 mb-6 shadow-amber-glow">
+            <p className="text-brand-400 text-4xl sm:text-5xl font-bold mb-1">{formatPrice(product.selling_price)}</p>
+            {product.original_price && product.original_price > product.selling_price && (
+              <div className="flex items-center gap-2">
+                <p className="text-dark-800/40 dark:text-white/30 text-sm line-through">{formatPrice(product.original_price)}</p>
+                {product.discount_percent && (
+                  <span className="badge-discount">-{product.discount_percent}%</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Stock */}
+          <div className="flex items-center gap-2 mb-6">
+            {product.stock_status === 'in_stock' ? (
+              <>
+                <CheckCircle size={18} weight="fill" className="text-green-500" />
+                <span className="text-green-500 text-sm font-semibold">In Stock</span>
+              </>
+            ) : (
+              <>
+                <XCircle size={18} weight="fill" className="text-red-500" />
+                <span className="text-red-500 text-sm font-semibold">Out of Stock</span>
+              </>
+            )}
+          </div>
+
+          {product.description && (
+            <p className="text-dark-800/70 dark:text-white/60 text-sm leading-relaxed mb-6">{product.description}</p>
+          )}
+
+          {product.key_features && product.key_features.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-dark-800 dark:text-white font-semibold mb-3">Key Features</h3>
+              <ul className="space-y-2">
+                {product.key_features.map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-dark-800/70 dark:text-white/60">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-400 mt-1.5 flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Actions */}
+          {product.stock_status === 'in_stock' && (
+            <div className="flex gap-3 mt-auto">
+              <button
+                onClick={handleAddToCart}
+                className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold transition-all ${
+                  added
+                    ? 'bg-green-500 text-white'
+                    : 'bg-dark-800 dark:bg-dark-700 hover:bg-dark-700 dark:hover:bg-dark-600 text-white border border-dark-700 dark:border-white/10'
+                }`}
+              >
+                <ShoppingCart size={18} weight="duotone" />
+                {added ? 'Added!' : 'Add to Cart'}
+              </button>
+              <button onClick={handleWhatsApp} className="flex-1 btn-whatsapp justify-center py-3.5">
+                <WhatsappLogo size={18} weight="fill" />
+                Order via WhatsApp
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  )
+}
