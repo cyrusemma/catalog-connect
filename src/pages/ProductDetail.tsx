@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, ShoppingCart, WhatsappLogo, Star, CheckCircle, XCircle, SmileySad } from '@phosphor-icons/react'
+import { ArrowLeft, ShoppingCart, WhatsappLogo, Star, CheckCircle, XCircle, SmileySad, ShareNetwork } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useProduct } from '../hooks/useProducts'
 import { useCartStore } from '../store/cartStore'
@@ -29,6 +29,17 @@ export default function ProductDetail() {
       buildProductWhatsAppMessage(product.title, product.selling_price, window.location.href)
     )
     window.open(url, '_blank')
+  }
+
+  const handleShare = async () => {
+    if (!product) return
+    const text = `Check this out: ${product.title} — GH₵ ${product.selling_price}`
+    const url = window.location.href
+    if (navigator.share) {
+      try { await navigator.share({ title: product.title, text, url }) } catch { /* user cancelled */ }
+      return
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`, '_blank')
   }
 
   if (isLoading) {
@@ -89,7 +100,9 @@ export default function ProductDetail() {
               {images.map((img, i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => setActiveImg(i)}
+                  aria-label={`Show image ${i + 1}`}
                   className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
                     activeImg === i ? 'border-brand-400 shadow-amber-glow' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
@@ -172,6 +185,7 @@ export default function ProductDetail() {
           {product.stock_status === 'in_stock' && (
             <div className="flex gap-3 mt-auto">
               <button
+                type="button"
                 onClick={handleAddToCart}
                 className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-semibold transition-all ${
                   added
@@ -182,12 +196,21 @@ export default function ProductDetail() {
                 <ShoppingCart size={18} weight="duotone" />
                 {added ? 'Added!' : 'Add to Cart'}
               </button>
-              <button onClick={handleWhatsApp} className="flex-1 btn-whatsapp justify-center py-3.5">
+              <button type="button" onClick={handleWhatsApp} className="flex-1 btn-whatsapp justify-center py-3.5">
                 <WhatsappLogo size={18} weight="fill" />
                 Order via WhatsApp
               </button>
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={handleShare}
+            className="mt-3 flex items-center justify-center gap-2 py-2.5 rounded-2xl text-sm font-medium text-brand-400 hover:bg-brand-400/10 border border-brand-400/30 transition-colors"
+          >
+            <ShareNetwork size={16} weight="duotone" />
+            Share this product
+          </button>
         </div>
       </div>
     </main>
