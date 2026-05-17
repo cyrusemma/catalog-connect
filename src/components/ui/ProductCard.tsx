@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom'
 import { ShoppingCart, WhatsappLogo, Star, Sparkle, Lightning } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { useCartStore } from '../../store/cartStore'
+import { useStoreSettings } from '../../hooks/useStoreSettings'
 import { buildProductWhatsAppMessage, buildWhatsAppUrl, formatPrice, isNewProduct } from '../../lib/utils'
 import type { Product } from '../../types'
-
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '233000000000'
 
 interface Props {
   product: Product
@@ -14,12 +13,13 @@ interface Props {
 
 export default function ProductCard({ product, index = 0 }: Props) {
   const addItem = useCartStore(s => s.addItem)
+  const settings = useStoreSettings()
   const isNew = isNewProduct(product.created_at)
 
   const handleWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault()
     const url = buildWhatsAppUrl(
-      WHATSAPP_NUMBER,
+      settings.whatsapp_number || '233000000000',
       buildProductWhatsAppMessage(product.title, product.selling_price, `${window.location.origin}/product/${product.id}`)
     )
     window.open(url, '_blank')

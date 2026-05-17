@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Trash, Plus, Minus, WhatsappLogo, ShoppingBag } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { useCartStore } from '../store/cartStore'
+import { useStoreSettings } from '../hooks/useStoreSettings'
 import { formatPrice, buildWhatsAppUrl, buildCartWhatsAppMessage } from '../lib/utils'
-
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '233000000000'
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCartStore()
+  const settings = useStoreSettings()
 
   const handleWhatsAppOrder = () => {
     const message = buildCartWhatsAppMessage(
       items.map(i => ({ title: i.product.title, qty: i.quantity, price: i.product.selling_price })),
       totalPrice()
     )
-    const url = buildWhatsAppUrl(WHATSAPP_NUMBER, message)
+    const url = buildWhatsAppUrl(settings.whatsapp_number || '233000000000', message)
     window.open(url, '_blank')
   }
 

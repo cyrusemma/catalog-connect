@@ -4,14 +4,14 @@ import { ArrowLeft, ShoppingCart, WhatsappLogo, Star, CheckCircle, XCircle, Smil
 import { motion, AnimatePresence } from 'framer-motion'
 import { useProduct } from '../hooks/useProducts'
 import { useCartStore } from '../store/cartStore'
+import { useStoreSettings } from '../hooks/useStoreSettings'
 import { formatPrice, buildWhatsAppUrl, buildProductWhatsAppMessage } from '../lib/utils'
-
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '233000000000'
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
   const { data: product, isLoading } = useProduct(id!)
   const addItem = useCartStore(s => s.addItem)
+  const settings = useStoreSettings()
   const [activeImg, setActiveImg] = useState(0)
   const [added, setAdded] = useState(false)
 
@@ -25,7 +25,7 @@ export default function ProductDetail() {
   const handleWhatsApp = () => {
     if (!product) return
     const url = buildWhatsAppUrl(
-      WHATSAPP_NUMBER,
+      settings.whatsapp_number || '233000000000',
       buildProductWhatsAppMessage(product.title, product.selling_price, window.location.href)
     )
     window.open(url, '_blank')

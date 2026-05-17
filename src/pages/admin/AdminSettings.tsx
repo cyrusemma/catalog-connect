@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Save, CheckCircle } from 'lucide-react'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { supabase } from '../../lib/supabase'
@@ -13,6 +13,7 @@ export default function AdminSettings() {
     currency: 'GHS',
   })
   const [saved, setSaved] = useState(false)
+  const qc = useQueryClient()
 
   const { data: settings } = useQuery({
     queryKey: ['store-settings'],
@@ -44,6 +45,7 @@ export default function AdminSettings() {
       }
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['store-settings'] })
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     },

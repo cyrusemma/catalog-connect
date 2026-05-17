@@ -3,11 +3,13 @@ import { ShoppingCart, Storefront, Moon, Sun } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '../../store/cartStore'
 import { useTheme } from '../../hooks/useTheme'
+import { useStoreSettings } from '../../hooks/useStoreSettings'
 
 export default function Navbar() {
   const location = useLocation()
   const totalItems = useCartStore(s => s.totalItems())
   const { theme, toggle } = useTheme()
+  const settings = useStoreSettings()
 
   const navLink = (to: string, label: string) => {
     const active = location.pathname === to
@@ -32,7 +34,7 @@ export default function Navbar() {
           <div className="w-9 h-9 bg-gradient-to-br from-brand-400 to-brand-500 rounded-xl flex items-center justify-center shadow-amber-glow group-hover:shadow-amber-glow-lg transition-shadow">
             <Storefront size={18} weight="duotone" className="text-white" />
           </div>
-          <span className="font-display font-bold text-lg text-dark-800 dark:text-white">Catalog</span>
+          <span className="font-display font-bold text-lg text-dark-800 dark:text-white">{settings.store_name}</span>
         </Link>
 
         <div className="hidden sm:flex items-center gap-7">

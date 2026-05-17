@@ -3,10 +3,12 @@ import { ArrowRight, Sparkle, Lightning, ShoppingBagOpen } from '@phosphor-icons
 import { motion } from 'framer-motion'
 import ProductCard from '../components/ui/ProductCard'
 import { useProducts, useNewProducts } from '../hooks/useProducts'
+import { useStoreSettings } from '../hooks/useStoreSettings'
 
 export default function Home() {
   const { data: featured } = useProducts({ featured: true })
   const { data: newProducts } = useNewProducts(7)
+  const settings = useStoreSettings()
 
   return (
     <main className="flex-1">
@@ -35,8 +37,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6 max-w-2xl text-dark-800 dark:text-white"
           >
-            Discover Amazing Products{' '}
-            <span className="text-shimmer">Brought to you By Cyrus</span>
+            <span className="text-shimmer">{settings.tagline}</span>
           </motion.h1>
 
           <motion.p
